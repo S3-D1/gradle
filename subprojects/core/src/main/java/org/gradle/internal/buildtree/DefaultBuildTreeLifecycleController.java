@@ -80,7 +80,7 @@ public class DefaultBuildTreeLifecycleController implements BuildTreeLifecycleCo
     @Override
     public <T> T fromBuildModel(boolean runTasks, BuildTreeModelAction<? extends T> action) {
         return runBuild(() -> {
-            modelCreator.beforeTasks(action);
+            modelCreator.beforeTasks(new PreliminaryConfiguringBuildTreeModelAction<>(action, buildLifecycleController));
             if (runTasks && isEligibleToRunTasks()) {
                 ExecutionResult<Void> result = workController.scheduleAndRunRequestedTasks(null);
                 if (!result.getFailures().isEmpty()) {
@@ -100,7 +100,7 @@ public class DefaultBuildTreeLifecycleController implements BuildTreeLifecycleCo
         });
     }
 
-    // Temporary workaround to make incremental sync work. IDEA is requires to execute `help` task
+    // Temporary workaround to make incremental sync work. IDEA requires to execute `help` task
     // to prevent default tasks be executed during sync. This is forcing all projects configuration.
     // Must be removed as soon as IDEA will use appropriate API for avoiding any tasks to be executed.
     private Boolean isEligibleToRunTasks() {
@@ -129,5 +129,32 @@ public class DefaultBuildTreeLifecycleController implements BuildTreeLifecycleCo
 
             return result.getValue();
         });
+    }
+
+    private static class PreliminaryConfiguringBuildTreeModelAction<T> implements BuildTreeModelAction<T> {
+
+        private final BuildTreeModelAction<T> delegate;
+        private final BuildLifecycleController buildLifecycleController;
+
+        PreliminaryConfiguringBuildTreeModelAction(
+            BuildTreeModelAction<T> delegate,
+            BuildLifecycleController buildLifecycleController
+        ) {
+            this.delegate = delegate;
+            this.buildLifecycleController = buildLifecycleController;
+        }
+
+        @Override
+        public void beforeTasks(BuildTreeModelController controller) {
+            buildLifecycleController.configureProjects();
+            delegate.beforeTasks(controller);
+        }
+
+        @Nullable
+        @Override
+        public T fromBuildModel(BuildTreeModelController controller) {
+            buildLifecycleController.configureProjects();
+            return delegate.fromBuildModel(controller);
+        }
     }
 }
