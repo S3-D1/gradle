@@ -28,7 +28,6 @@ import org.gradle.test.precondition.Requires
 import org.gradle.test.preconditions.UnitTestPreconditions
 
 @RequiresInstalledToolChain(ToolChainRequirement.SWIFTC)
-@Requires(UnitTestPreconditions.NotMacOsM1) // M1 Macs need modern Xcode to compile aarch64 binaries
 @DoesNotSupportNonAsciiPaths(reason = "Swift sometimes fails when executed from non-ASCII directory")
 class SwiftLibraryInitIntegrationTest extends AbstractInitIntegrationSpec {
 
