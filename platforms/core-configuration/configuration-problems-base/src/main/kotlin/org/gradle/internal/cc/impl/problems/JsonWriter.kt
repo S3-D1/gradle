@@ -23,7 +23,6 @@ class JsonWriter(private val writer: Writer) {
     private var nextItemNeedsComma = false
 
     fun jsonObject(body: () -> Unit) {
-        elementSeparator()
         beginObject()
         body()
         endObject()
@@ -97,7 +96,6 @@ class JsonWriter(private val writer: Writer) {
         }
     }
 
-    private
     fun comma() {
         write(',')
     }

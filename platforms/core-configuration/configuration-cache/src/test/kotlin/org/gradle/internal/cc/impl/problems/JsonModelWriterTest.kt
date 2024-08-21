@@ -46,6 +46,7 @@ class JsonModelWriterTest {
                         "input"
                     )
                 ).writeToJson(this.modelWriter)
+                this.modelWriter.comma() // TODO beginModel creates an object list, for which we need to manually add the separator comma here. This should be automatically handled in JsonModelWriter.
                 DecoratedReportProblemJsonSource(
                     DecoratedReportProblem(
                         PropertyTrace.Unknown,
