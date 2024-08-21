@@ -63,7 +63,7 @@ class JsonWriterTest {
                     }
                 }
             },
-            hasEntry("solutions",listOf<String>())
+            hasEntry("solutions", listOf<String>())
         )
     }
 
@@ -128,7 +128,7 @@ class JsonWriterTest {
                     }
                 }
             },
-            hasEntry("solutions",listOf<String>())
+            hasEntry("solutions", listOf<String>())
         )
     }
 
